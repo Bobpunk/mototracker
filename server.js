@@ -9,18 +9,23 @@ process.env.TZ = 'America/Sao_Paulo';
 
 // Função para converter UTC para horário do Brasil
 function toBrazilTime(utcString) {
-  const date = new Date(utcString);
-  // Converter para fuso horário do Brasil (UTC-3)
-  const brazilTime = new Date(date.getTime() - (3 * 60 * 60 * 1000));
-  
-  return brazilTime.toLocaleString('pt-BR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
+  try {
+    const date = new Date(utcString);
+    // Converter para fuso horário do Brasil (UTC-3)
+    const brazilTime = new Date(date.getTime() - (3 * 60 * 60 * 1000));
+    
+    return brazilTime.toLocaleString('pt-BR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  } catch (error) {
+    console.error('Erro ao converter horário:', error);
+    return utcString; // Retorna o horário original se houver erro
+  }
 }
 
 const app = express();
