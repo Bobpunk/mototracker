@@ -668,17 +668,17 @@
         // Funções para download e QR Code
         function downloadAPK() {
             // Usar o APK que está no servidor
-            const apkUrl = window.location.origin + '/MotoboyTracker_Rigorous_v3.apk';
+            const apkUrl = window.location.origin + '/MotoboyTracker_Rigorous_v4.apk';
             const link = document.createElement('a');
             link.href = apkUrl;
-            link.download = 'MotoboyTracker_Rigorous_v3.apk';
+            link.download = 'MotoboyTracker_Rigorous_v4.apk';
             link.target = '_blank';
             link.click();
         }
 
         function showQRCode() {
             const modal = document.getElementById('qrModal');
-            const apkUrl = window.location.origin + '/MotoboyTracker_Rigorous_v3.apk';
+            const apkUrl = window.location.origin + '/MotoboyTracker_Rigorous_v4.apk';
             
             // Atualizar URL no modal
             document.getElementById('webAppUrl').textContent = apkUrl;
