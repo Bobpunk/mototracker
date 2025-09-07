@@ -80,7 +80,27 @@ app.post('/api/motoboys', (req, res) => {
   });
 });
 
-// 2. Iniciar sessão de trabalho
+// 2. Listar sessões ativas
+app.get('/api/sessions', (req, res) => {
+  const sql = `
+    SELECT s.*, m.name as motoboy_name 
+    FROM sessions s 
+    JOIN motoboys m ON s.motoboy_id = m.id 
+    WHERE s.is_active = 1 
+    ORDER BY s.start_time DESC
+  `;
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error('Erro ao buscar sessões:', err);
+      return res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+    
+    res.json({ success: true, data: rows });
+  });
+});
+
+// 3. Iniciar sessão de trabalho
 app.post('/api/sessions', (req, res) => {
   const { motoboyId, odometer } = req.body;
   
