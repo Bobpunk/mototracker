@@ -4,6 +4,23 @@ const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
+// Configurar fuso horário do Brasil
+process.env.TZ = 'America/Sao_Paulo';
+
+// Função para converter UTC para horário do Brasil
+function toBrazilTime(utcString) {
+  const date = new Date(utcString);
+  return date.toLocaleString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -96,7 +113,14 @@ app.get('/api/sessions', (req, res) => {
       return res.status(500).json({ error: 'Erro interno do servidor' });
     }
     
-    res.json({ success: true, data: rows });
+    // Converter horários para fuso do Brasil
+    const rowsWithBrazilTime = rows.map(row => ({
+      ...row,
+      start_time: toBrazilTime(row.start_time),
+      end_time: row.end_time ? toBrazilTime(row.end_time) : null
+    }));
+    
+    res.json({ success: true, data: rowsWithBrazilTime });
   });
 });
 
@@ -109,19 +133,33 @@ app.post('/api/sessions', (req, res) => {
     return res.status(400).json({ error: 'ID do motoboy e odômetro são obrigatórios' });
   }
 
-  const sql = `INSERT INTO sessions (motoboy_id, odometer) VALUES (?, ?)`;
+  // Primeiro, finalizar todas as sessões ativas do mesmo motoboy
+  const finalizeSql = `UPDATE sessions 
+                       SET end_time = CURRENT_TIMESTAMP, 
+                           is_active = 0 
+                       WHERE motoboy_id = ? AND is_active = 1`;
   
-  db.run(sql, [motoboyIdFinal, parseFloat(odometer)], function(err) {
+  db.run(finalizeSql, [motoboyIdFinal], function(err) {
     if (err) {
-      console.error('Erro ao iniciar sessão:', err);
+      console.error('Erro ao finalizar sessões anteriores:', err);
       return res.status(500).json({ error: 'Erro interno do servidor' });
     }
     
-    res.json({ 
-      success: true, 
-      message: 'Sessão iniciada com sucesso',
-      sessionId: this.lastID,
-      data: { motoboyId: motoboyIdFinal, odometer: parseFloat(odometer) }
+    // Agora criar nova sessão
+    const sql = `INSERT INTO sessions (motoboy_id, odometer) VALUES (?, ?)`;
+    
+    db.run(sql, [motoboyIdFinal, parseFloat(odometer)], function(err) {
+      if (err) {
+        console.error('Erro ao iniciar sessão:', err);
+        return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: 'Sessão iniciada com sucesso',
+        sessionId: this.lastID,
+        data: { motoboyId: motoboyIdFinal, odometer: parseFloat(odometer) }
+      });
     });
   });
 });
