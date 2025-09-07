@@ -292,6 +292,37 @@
             transform: translateY(-2px);
         }
 
+        .btn-track {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .btn-track:hover {
+            background: #218838;
+            color: white;
+            text-decoration: none;
+        }
+
+        .motoboy-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .motoboy-link:hover {
+            color: #5a6fd8;
+            text-decoration: underline;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -408,6 +439,30 @@
                 <div class="stat-card">
                     <h3 id="totalSessions">-</h3>
                     <p>Total de Sessões</p>
+                </div>
+            </div>
+
+            <!-- Sessões Ativas -->
+            <div class="section">
+                <h2>🚀 Sessões Ativas</h2>
+                <div class="table-container">
+                    <table id="sessionsTable">
+                        <thead>
+                            <tr>
+                                <th>ID do Motoboy</th>
+                                <th>Nome</th>
+                                <th>Odômetro</th>
+                                <th>Iniciado em</th>
+                                <th>Status</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessionsTableBody">
+                            <tr>
+                                <td colspan="6" class="loading">Carregando sessões...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -536,6 +591,42 @@
         }
 
         // Carregar dados dos motoboys
+        async function loadSessions() {
+            try {
+                const data = await apiRequest('/sessions');
+                const tbody = document.getElementById('sessionsTableBody');
+                
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(session => `
+                        <tr>
+                            <td>
+                                <a href="tracker.html?id=${session.motoboy_id}" class="motoboy-link">
+                                    ${session.motoboy_id}
+                                </a>
+                            </td>
+                            <td>${session.motoboy_name || 'N/A'}</td>
+                            <td>${session.odometer} km</td>
+                            <td>${new Date(session.start_time).toLocaleString('pt-BR')}</td>
+                            <td>
+                                <span style="color: #28a745; font-weight: bold;">● Ativo</span>
+                            </td>
+                            <td>
+                                <a href="tracker.html?id=${session.motoboy_id}" class="btn-track">
+                                    📍 Rastrear
+                                </a>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="loading">Nenhuma sessão ativa</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar sessões:', error);
+                document.getElementById('sessionsTableBody').innerHTML = 
+                    '<tr><td colspan="6" class="loading">Erro ao carregar sessões</td></tr>';
+            }
+        }
+
         async function loadMotoboys() {
             try {
                 const data = await apiRequest('/motoboys');
@@ -657,6 +748,7 @@
         async function refreshData() {
             console.log('Atualizando dados...');
             await Promise.all([
+                loadSessions(),
                 loadMotoboys(),
                 loadReport(),
                 loadLocations(),
