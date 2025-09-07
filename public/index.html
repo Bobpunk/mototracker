@@ -210,6 +210,147 @@
             font-weight: bold;
         }
 
+        .download-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .download-section h3 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .download-section p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-qr {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-qr:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn-web {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-web:hover {
+            background: #5a32a3;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+        }
+
+        .instructions {
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .instructions h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2em;
@@ -232,6 +373,21 @@
         <div class="header">
             <h1>🏍️ Motoboy Tracker</h1>
             <p>Dashboard de Monitoramento em Tempo Real</p>
+            <div class="download-section">
+                <h3>📱 App para Motoboys</h3>
+                <p>Baixe o aplicativo para rastreamento</p>
+                <div class="download-buttons">
+                    <button class="btn btn-download" onclick="downloadAPK()">
+                        📥 Baixar APK
+                    </button>
+                    <button class="btn btn-qr" onclick="showQRCode()">
+                        📱 QR Code
+                    </button>
+                    <button class="btn btn-web" onclick="openWebApp()">
+                        🌐 App Web
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="content">
@@ -330,6 +486,30 @@
 
     <button class="refresh-btn" onclick="refreshData()" title="Atualizar Dados">🔄</button>
 
+    <!-- Modal para QR Code -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>📱 QR Code para Motoboys</h2>
+            <div class="qr-code">
+                <div id="qrcode"></div>
+            </div>
+            <p><strong>URL do App Web:</strong></p>
+            <p id="webAppUrl" style="word-break: break-all; background: #f8f9fa; padding: 10px; border-radius: 5px;"></p>
+            <div class="instructions">
+                <h4>📋 Instruções para Motoboys:</h4>
+                <ol>
+                    <li>Escaneie o QR Code com a câmera do celular</li>
+                    <li>Ou acesse a URL diretamente no navegador</li>
+                    <li>Configure o ID do motoboy (ex: MOT001)</li>
+                    <li>Configure a URL do servidor</li>
+                    <li>Inicie o rastreamento</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
         const API_BASE = '/api';
         
@@ -483,6 +663,62 @@
                 updateStats()
             ]);
             console.log('Dados atualizados!');
+        }
+
+        // Funções para download e QR Code
+        function downloadAPK() {
+            // Criar link de download para o APK
+            const apkUrl = 'https://github.com/Bobpunk/mototracker/releases/download/v1.0.0/MotoboyTracker_Railway.apk';
+            const link = document.createElement('a');
+            link.href = apkUrl;
+            link.download = 'MotoboyTracker_Railway.apk';
+            link.click();
+        }
+
+        function showQRCode() {
+            const modal = document.getElementById('qrModal');
+            const webAppUrl = window.location.origin + '/motoboy_web.html';
+            
+            // Atualizar URL no modal
+            document.getElementById('webAppUrl').textContent = webAppUrl;
+            
+            // Gerar QR Code
+            const qrDiv = document.getElementById('qrcode');
+            qrDiv.innerHTML = ''; // Limpar QR code anterior
+            
+            QRCode.toCanvas(qrDiv, webAppUrl, {
+                width: 200,
+                height: 200,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function (error) {
+                if (error) {
+                    console.error('Erro ao gerar QR Code:', error);
+                    qrDiv.innerHTML = '<p>Erro ao gerar QR Code</p>';
+                }
+            });
+            
+            modal.style.display = 'block';
+        }
+
+        function openWebApp() {
+            const webAppUrl = window.location.origin + '/motoboy_web.html';
+            window.open(webAppUrl, '_blank');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('qrModal');
+            modal.style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('qrModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
         }
 
         // Carregar dados iniciais

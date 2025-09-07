@@ -45,7 +45,7 @@ cd mototracker
 
 ### **2. Configurar URL do Servidor**
 1. **Abra:** `lib/main.dart`
-2. **Altere:** `_serverUrl` para sua URL do Railway
+2. **Altere:** `https://mototracker-production.up.railway.app/` para sua URL do Railway
 3. **Exemplo:** `https://mototracker-production.railway.app/api`
 
 ### **3. Compilar APK**

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motoboy Tracker - App Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.ready {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.tracking {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .location-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .location-info h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .location-info p {
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #856404;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏍️ Motoboy Tracker</h1>
+            <p>App Web para Rastreamento</p>
+        </div>
+
+        <div class="content">
+            <!-- Instruções -->
+            <div class="instructions">
+                <h4>📋 Instruções:</h4>
+                <ol>
+                    <li>Configure seu ID de motoboy</li>
+                    <li>Configure a URL do servidor</li>
+                    <li>Digite o odômetro inicial</li>
+                    <li>Inicie o rastreamento</li>
+                    <li>Permita acesso à localização</li>
+                </ol>
+            </div>
+
+            <!-- Status -->
+            <div id="status" class="status ready">
+                Pronto para configurar
+            </div>
+
+            <!-- Configuração -->
+            <div class="card">
+                <h3>⚙️ Configuração</h3>
+                <div class="form-group">
+                    <label for="motoboyId">ID do Motoboy:</label>
+                    <input type="text" id="motoboyId" placeholder="Ex: MOT001" value="">
+                </div>
+                <div class="form-group">
+                    <label for="serverUrl">URL do Servidor:</label>
+                    <input type="text" id="serverUrl" placeholder="https://mototracker-production.up.railway.app/api" value="https://mototracker-production.up.railway.app/api">
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    💾 Salvar Configurações
+                </button>
+            </div>
+
+            <!-- Controle de Rastreamento -->
+            <div class="card">
+                <h3>🎯 Controle de Rastreamento</h3>
+                <div class="form-group">
+                    <label for="odometer">Odômetro Inicial (km):</label>
+                    <input type="number" id="odometer" placeholder="Ex: 12345.6" step="0.1">
+                </div>
+                <button class="btn btn-success" id="startBtn" onclick="startTracking()">
+                    ▶️ Iniciar Rastreamento
+                </button>
+                <button class="btn btn-danger hidden" id="stopBtn" onclick="stopTracking()">
+                    ⏹️ Parar Rastreamento
+                </button>
+            </div>
+
+            <!-- Informações de Localização -->
+            <div id="locationInfo" class="location-info hidden">
+                <h4>📍 Localização Atual</h4>
+                <p><strong>Latitude:</strong> <span id="latitude">-</span></p>
+                <p><strong>Longitude:</strong> <span id="longitude">-</span></p>
+                <p><strong>Precisão:</strong> <span id="accuracy">-</span></p>
+                <p><strong>Última atualização:</strong> <span id="lastUpdate">-</span></p>
+            </div>
+
+            <!-- Informações do Servidor -->
+            <div class="card">
+                <h3>🌐 Informações do Servidor</h3>
+                <p><strong>Dashboard:</strong> <span id="dashboardUrl">-</span></p>
+                <p><strong>API:</strong> <span id="apiUrl">-</span></p>
+                <button class="btn btn-secondary" onclick="openDashboard()">
+                    📊 Abrir Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isTracking = false;
+        let locationInterval = null;
+        let motoboyId = '';
+        let serverUrl = '';
+
+        // Carregar configurações salvas
+        function loadSettings() {
+            motoboyId = localStorage.getItem('motoboy_id') || '';
+            serverUrl = localStorage.getItem('server_url') || 'https://mototracker-production.up.railway.app/api';
+            
+            document.getElementById('motoboyId').value = motoboyId;
+            document.getElementById('serverUrl').value = serverUrl;
+            
+            updateServerInfo();
+        }
+
+        // Salvar configurações
+        function saveSettings() {
+            motoboyId = document.getElementById('motoboyId').value.trim();
+            serverUrl = document.getElementById('serverUrl').value.trim();
+            
+            if (!motoboyId) {
+                showError('Digite o ID do motoboy');
+                return;
+            }
+            
+            if (!serverUrl) {
+                showError('Digite a URL do servidor');
+                return;
+            }
+            
+            localStorage.setItem('motoboy_id', motoboyId);
+            localStorage.setItem('server_url', serverUrl);
+            
+            updateServerInfo();
+            showSuccess('Configurações salvas com sucesso!');
+            updateStatus('Pronto para iniciar rastreamento', 'ready');
+        }
+
+        // Atualizar informações do servidor
+        function updateServerInfo() {
+            const dashboardUrl = serverUrl.replace('/api', '');
+            document.getElementById('dashboardUrl').textContent = dashboardUrl;
+            document.getElementById('apiUrl').textContent = serverUrl;
+        }
+
+        // Iniciar rastreamento
+        async function startTracking() {
+            if (!motoboyId) {
+                showError('Configure o ID do motoboy primeiro');
+                return;
+            }
+            
+            const odometer = document.getElementById('odometer').value;
+            if (!odometer) {
+                showError('Digite o valor do odômetro');
+                return;
+            }
+            
+            updateStatus('Solicitando permissões...', 'ready');
+            
+            try {
+                // Solicitar permissão de localização
+                const position = await getCurrentPosition();
+                if (!position) {
+                    throw new Error('Permissão de localização negada');
+                }
+                
+                updateStatus('Iniciando sessão...', 'ready');
+                
+                // Registrar motoboy
+                await registerMotoboy();
+                
+                // Iniciar sessão
+                const sessionId = await startSession(odometer);
+                if (!sessionId) {
+                    throw new Error('Falha ao iniciar sessão');
+                }
+                
+                // Iniciar rastreamento
+                isTracking = true;
+                locationInterval = setInterval(sendLocation, 30000);
+                
+                // Primeira localização
+                await sendLocation();
+                
+                updateStatus('Rastreamento ativo', 'tracking');
+                document.getElementById('startBtn').classList.add('hidden');
+                document.getElementById('stopBtn').classList.remove('hidden');
+                document.getElementById('locationInfo').classList.remove('hidden');
+                
+                showSuccess('Rastreamento iniciado com sucesso!');
+                
+            } catch (error) {
+                updateStatus('Erro: ' + error.message, 'error');
+                showError('Erro ao iniciar rastreamento: ' + error.message);
+            }
+        }
+
+        // Parar rastreamento
+        function stopTracking() {
+            isTracking = false;
+            if (locationInterval) {
+                clearInterval(locationInterval);
+                locationInterval = null;
+            }
+            
+            updateStatus('Rastreamento parado', 'ready');
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('stopBtn').classList.add('hidden');
+            
+            showSuccess('Rastreamento parado');
+        }
+
+        // Obter localização atual
+        function getCurrentPosition() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocalização não suportada'));
+                    return;
+                }
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        updateLocationInfo(position);
+                        resolve(position);
+                    },
+                    (error) => {
+                        reject(new Error('Erro ao obter localização: ' + error.message));
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+
+        // Atualizar informações de localização
+        function updateLocationInfo(position) {
+            document.getElementById('latitude').textContent = position.coords.latitude.toFixed(6);
+            document.getElementById('longitude').textContent = position.coords.longitude.toFixed(6);
+            document.getElementById('accuracy').textContent = position.coords.accuracy ? 
+                position.coords.accuracy.toFixed(2) + 'm' : 'N/A';
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('pt-BR');
+        }
+
+        // Enviar localização
+        async function sendLocation() {
+            try {
+                const position = await getCurrentPosition();
+                
+                const response = await fetch(serverUrl + '/locations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        motoboyId: motoboyId,
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Localização enviada com sucesso');
+                } else {
+                    console.error('Erro ao enviar localização:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar localização:', error);
+            }
+        }
+
+        // Registrar motoboy
+        async function registerMotoboy() {
+            const response = await fetch(serverUrl + '/motoboys', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: motoboyId,
+                    name: 'Motoboy ' + motoboyId,
+                    phone: ''
+                })
+            });
+            
+            if (!response.ok) {
+                console.error('Erro ao registrar motoboy:', response.statusText);
+            }
+        }
+
+        // Iniciar sessão
+        async function startSession(odometer) {
+            const response = await fetch(serverUrl + '/sessions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    motoboyId: motoboyId,
+                    odometer: parseFloat(odometer)
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return data.sessionId;
+            } else {
+                throw new Error('Falha ao iniciar sessão: ' + response.statusText);
+            }
+        }
+
+        // Atualizar status
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+        }
+
+        // Mostrar erro
+        function showError(message) {
+            const errorEl = document.createElement('div');
+            errorEl.className = 'error';
+            errorEl.textContent = message;
+            document.querySelector('.content').insertBefore(errorEl, document.querySelector('.card'));
+            
+            setTimeout(() => {
+                errorEl.remove();
+            }, 5000);
+        }
+
+        // Mostrar sucesso
+        function showSuccess(message) {
+            const successEl = document.createElement('div');
+            successEl.className = 'success';
+            successEl.textContent = message;
+            document.querySelector('.content').insertBefore(successEl, document.querySelector('.card'));
+            
+            setTimeout(() => {
+                successEl.remove();
+            }, 3000);
+        }
+
+        // Abrir dashboard
+        function openDashboard() {
+            const dashboardUrl = serverUrl.replace('/api', '');
+            window.open(dashboardUrl, '_blank');
+        }
+
+        // Carregar configurações ao iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
+    </script>
+</body>
+</html>
