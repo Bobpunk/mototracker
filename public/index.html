@@ -490,17 +490,18 @@
     <div id="qrModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h2>📱 QR Code para Motoboys</h2>
+            <h2>📱 QR Code para Download do App</h2>
             <div class="qr-code">
                 <div id="qrcode"></div>
             </div>
-            <p><strong>URL do App Web:</strong></p>
+            <p><strong>URL do APK:</strong></p>
             <p id="webAppUrl" style="word-break: break-all; background: #f8f9fa; padding: 10px; border-radius: 5px;"></p>
             <div class="instructions">
                 <h4>📋 Instruções para Motoboys:</h4>
                 <ol>
                     <li>Escaneie o QR Code com a câmera do celular</li>
                     <li>Ou acesse a URL diretamente no navegador</li>
+                    <li>Baixe e instale o APK no celular</li>
                     <li>Configure o ID do motoboy (ex: MOT001)</li>
                     <li>Configure a URL do servidor</li>
                     <li>Inicie o rastreamento</li>
@@ -677,10 +678,10 @@
 
         function showQRCode() {
             const modal = document.getElementById('qrModal');
-            const webAppUrl = window.location.origin + '/motoboy_web.html';
+            const apkUrl = window.location.origin + '/MotoboyTracker_Railway.apk';
             
             // Atualizar URL no modal
-            document.getElementById('webAppUrl').textContent = webAppUrl;
+            document.getElementById('webAppUrl').textContent = apkUrl;
             
             // Gerar QR Code usando API online
             const qrDiv = document.getElementById('qrcode');
@@ -688,8 +689,8 @@
             
             // Criar imagem do QR Code usando API online
             const qrImg = document.createElement('img');
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(webAppUrl)}`;
-            qrImg.alt = 'QR Code para App Web';
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(apkUrl)}`;
+            qrImg.alt = 'QR Code para Download do APK';
             qrImg.style.border = '1px solid #ddd';
             qrImg.style.borderRadius = '5px';
             
