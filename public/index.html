@@ -509,7 +509,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
         const API_BASE = '/api';
         
@@ -667,11 +666,12 @@
 
         // Funções para download e QR Code
         function downloadAPK() {
-            // Criar link de download para o APK
-            const apkUrl = 'https://github.com/Bobpunk/mototracker/releases/download/v1.0.0/MotoboyTracker_Railway.apk';
+            // Usar o APK que está no servidor
+            const apkUrl = window.location.origin + '/MotoboyTracker_Railway.apk';
             const link = document.createElement('a');
             link.href = apkUrl;
             link.download = 'MotoboyTracker_Railway.apk';
+            link.target = '_blank';
             link.click();
         }
 
@@ -682,23 +682,24 @@
             // Atualizar URL no modal
             document.getElementById('webAppUrl').textContent = webAppUrl;
             
-            // Gerar QR Code
+            // Gerar QR Code usando API online
             const qrDiv = document.getElementById('qrcode');
             qrDiv.innerHTML = ''; // Limpar QR code anterior
             
-            QRCode.toCanvas(qrDiv, webAppUrl, {
-                width: 200,
-                height: 200,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            }, function (error) {
-                if (error) {
-                    console.error('Erro ao gerar QR Code:', error);
-                    qrDiv.innerHTML = '<p>Erro ao gerar QR Code</p>';
-                }
-            });
+            // Criar imagem do QR Code usando API online
+            const qrImg = document.createElement('img');
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(webAppUrl)}`;
+            qrImg.alt = 'QR Code para App Web';
+            qrImg.style.border = '1px solid #ddd';
+            qrImg.style.borderRadius = '5px';
+            
+            qrImg.onload = function() {
+                qrDiv.appendChild(qrImg);
+            };
+            
+            qrImg.onerror = function() {
+                qrDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code. Acesse a URL diretamente.</p>';
+            };
             
             modal.style.display = 'block';
         }
