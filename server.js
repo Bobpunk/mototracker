@@ -209,7 +209,27 @@ app.get('/api/motoboys', (req, res) => {
   });
 });
 
-// 6. Obter localizações de um motoboy
+// 6. Listar todas as localizações recentes
+app.get('/api/locations', (req, res) => {
+  const sql = `
+    SELECT l.*, m.name as motoboy_name 
+    FROM locations l 
+    JOIN motoboys m ON l.motoboy_id = m.id 
+    ORDER BY l.timestamp DESC 
+    LIMIT 100
+  `;
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error('Erro ao buscar localizações:', err);
+      return res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+    
+    res.json({ success: true, data: rows });
+  });
+});
+
+// 7. Obter localizações de um motoboy
 app.get('/api/locations/:motoboyId', (req, res) => {
   const { motoboyId } = req.params;
   const { limit = 100 } = req.query;
