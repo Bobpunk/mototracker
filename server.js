@@ -102,15 +102,16 @@ app.get('/api/sessions', (req, res) => {
 
 // 3. Iniciar sessão de trabalho
 app.post('/api/sessions', (req, res) => {
-  const { motoboyId, odometer } = req.body;
+  const { motoboyId, motoboy_id, odometer } = req.body;
+  const motoboyIdFinal = motoboyId || motoboy_id;
   
-  if (!motoboyId || !odometer) {
+  if (!motoboyIdFinal || !odometer) {
     return res.status(400).json({ error: 'ID do motoboy e odômetro são obrigatórios' });
   }
 
   const sql = `INSERT INTO sessions (motoboy_id, odometer) VALUES (?, ?)`;
   
-  db.run(sql, [motoboyId, parseFloat(odometer)], function(err) {
+  db.run(sql, [motoboyIdFinal, parseFloat(odometer)], function(err) {
     if (err) {
       console.error('Erro ao iniciar sessão:', err);
       return res.status(500).json({ error: 'Erro interno do servidor' });
@@ -120,7 +121,7 @@ app.post('/api/sessions', (req, res) => {
       success: true, 
       message: 'Sessão iniciada com sucesso',
       sessionId: this.lastID,
-      data: { motoboyId, odometer: parseFloat(odometer) }
+      data: { motoboyId: motoboyIdFinal, odometer: parseFloat(odometer) }
     });
   });
 });
@@ -167,9 +168,10 @@ app.put('/api/sessions/:sessionId/end', (req, res) => {
 
 // 4. Enviar localização
 app.post('/api/locations', (req, res) => {
-  const { motoboyId, sessionId, latitude, longitude, accuracy, timestamp } = req.body;
+  const { motoboyId, motoboy_id, sessionId, latitude, longitude, accuracy, timestamp } = req.body;
+  const motoboyIdFinal = motoboyId || motoboy_id;
   
-  if (!motoboyId || !latitude || !longitude) {
+  if (!motoboyIdFinal || !latitude || !longitude) {
     return res.status(400).json({ error: 'Dados de localização incompletos' });
   }
 
@@ -178,7 +180,7 @@ app.post('/api/locations', (req, res) => {
   
   const timestampValue = timestamp ? new Date(timestamp).toISOString() : new Date().toISOString();
   
-  db.run(sql, [motoboyId, sessionId, parseFloat(latitude), parseFloat(longitude), 
+  db.run(sql, [motoboyIdFinal, sessionId, parseFloat(latitude), parseFloat(longitude), 
                parseFloat(accuracy) || 0, timestampValue], function(err) {
     if (err) {
       console.error('Erro ao enviar localização:', err);
