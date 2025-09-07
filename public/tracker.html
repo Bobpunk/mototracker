@@ -182,6 +182,31 @@
         .back-btn:hover {
             background: #5a6268;
         }
+
+        /* Estilo do marcador da moto */
+        .motoboy-marker {
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(102, 126, 234, 0.6);
+            }
+            100% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            }
+        }
     </style>
 </head>
 <body>
@@ -250,7 +275,7 @@
 
         // Inicializar mapa
         function initMap() {
-            map = L.map('map').setView([-23.5505, -46.6333], 13); // São Paulo como padrão
+            map = L.map('map').setView([-23.5505, -46.6333], 16); // São Paulo como padrão com zoom maior
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
@@ -301,8 +326,8 @@
                 icon: L.divIcon({
                     className: 'motoboy-marker',
                     html: '🏍️',
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15]
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25]
                 })
             }).addTo(map);
 
@@ -314,8 +339,8 @@
                 radius: accuracy
             }).addTo(map);
 
-            // Centralizar mapa na localização
-            map.setView([lat, lng], 15);
+            // Centralizar mapa na localização com zoom maior
+            map.setView([lat, lng], 18);
         }
 
         // Atualizar painel de informações
