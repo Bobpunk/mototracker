@@ -480,7 +480,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        motoboy_id: motoboyId,
+                        motoboyId: motoboyId,
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         accuracy: position.coords.accuracy,
@@ -525,7 +525,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    motoboy_id: motoboyId,
+                    motoboyId: motoboyId,
                     odometer: parseFloat(odometer)
                 })
             });
