@@ -10,8 +10,10 @@ process.env.TZ = 'America/Sao_Paulo';
 // Função para converter UTC para horário do Brasil
 function toBrazilTime(utcString) {
   const date = new Date(utcString);
-  return date.toLocaleString('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
+  // Converter para fuso horário do Brasil (UTC-3)
+  const brazilTime = new Date(date.getTime() - (3 * 60 * 60 * 1000));
+  
+  return brazilTime.toLocaleString('pt-BR', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
